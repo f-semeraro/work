@@ -172,3 +172,20 @@ h1 {
   border-radius: 5px;
   cursor: pointer;
 }
+
+tr.dtrg-start {
+  cursor: pointer;
+}
+
+tr.dtrg-start > td {
+  background-color: #e0e0e0;
+  font-weight: bold;
+}
+
+tr.dtrg-start > td::before {
+  content: '\25BC\00a0';
+}
+
+tr.dtrg-start.collapsed > td::before {
+  content: '\25B6\00a0';
+}
