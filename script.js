@@ -88,6 +88,21 @@ function applyFilters() {
 
 function render() {
   resultsPerPage = parseInt(document.getElementById("perPage").value);
+
+  if (filteredData.length === 0) {
+    document.getElementById("cve-list").innerHTML = "<div class=\"no-results\">No results found.</div>";
+    document.getElementById("resultsCount").textContent = "No results";
+    const pagination = document.getElementById("pagination");
+    pagination.innerHTML = "";
+    pagination.style.display = "none";
+    return;
+  }
+
+  const totalPages = Math.ceil(filteredData.length / resultsPerPage);
+  if (currentPage > totalPages && totalPages > 0) {
+    currentPage = 1;
+  }
+
   const start = (currentPage - 1) * resultsPerPage;
   const end = start + resultsPerPage;
   const currentItems = filteredData.slice(start, end);
@@ -118,13 +133,12 @@ function render() {
 
   document.getElementById("cve-list").innerHTML = list;
 
-  const totalPages = Math.ceil(filteredData.length / resultsPerPage);
-
   document.getElementById("resultsCount").textContent =
   `Showing ${start + 1}-${Math.min(end, filteredData.length)} of ${filteredData.length} results`;
 
-
-  document.getElementById("pagination").innerHTML = `
+  const pagination = document.getElementById("pagination");
+  pagination.style.display = "";
+  pagination.innerHTML = `
     Page ${currentPage} of ${totalPages}
     <button onclick="changePage(-1)" ${currentPage === 1 ? "disabled" : ""}>⬅</button>
     <button onclick="changePage(1)" ${currentPage === totalPages ? "disabled" : ""}>➡</button>
