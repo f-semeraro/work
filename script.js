@@ -2,6 +2,7 @@ let cveData = [];
 let filteredData = [];
 let currentPage = 1;
 let resultsPerPage = 50;
+let groupByCve = false;
 
 document.getElementById("fileInput").addEventListener("change", (event) => {
   const file = event.target.files[0];
@@ -22,6 +23,11 @@ document.getElementById("fileInput").addEventListener("change", (event) => {
 
 document.getElementById("perPage").addEventListener("change", () => {
   currentPage = 1;
+  render();
+});
+
+document.getElementById("groupByCve").addEventListener("change", (e) => {
+  groupByCve = e.target.checked;
   render();
 });
 
@@ -89,6 +95,9 @@ function applyFilters() {
 function render() {
   resultsPerPage = parseInt(document.getElementById("perPage").value);
 
+  const uniqueCves = new Set(filteredData.map(f => f.vulnerability.id));
+  const uniqueArtifacts = new Set(filteredData.map(f => f.artifact?.id));
+
   if (filteredData.length === 0) {
     document.getElementById("cve-list").innerHTML = "<div class=\"no-results\">No results found.</div>";
     document.getElementById("resultsCount").textContent = "No results";
@@ -96,6 +105,54 @@ function render() {
     pagination.innerHTML = "";
     pagination.style.display = "none";
     return;
+  }
+
+  if (groupByCve) {
+    // Using <details> for an accessible, keyboard-friendly disclosure of groups
+    const grouped = filteredData.reduce((acc, item) => {
+      const id = item.vulnerability.id;
+      (acc[id] = acc[id] || []).push(item);
+      return acc;
+    }, {});
+
+    const list = Object.entries(grouped).map(([cveId, items]) => {
+      const entries = items.map(item => {
+        const epss = item.vulnerability.epss?.[0]?.epss ?? "n/a";
+        const artifactName = item.artifact?.id ?? "Unknown";
+        const percentile = item.vulnerability.epss?.[0]?.percentile ?? "n/a";
+        const percentileFormatted = typeof percentile === 'number' ? (percentile * 100).toFixed(2) + '%' : "n/a";
+        const risk = item.vulnerability.risk ?? "n/a";
+        const riskFormatted = typeof risk === 'number' ? risk.toFixed(2) : "n/a";
+        const fixState = item.vulnerability.fix?.state ?? "unknown";
+        return `
+          <div class="cve-entry">
+            <strong><a style="color: #005f73" href="https://nvd.nist.gov/vuln/detail/${item.vulnerability.id}" target="_blank">
+              ${item.vulnerability.id}
+            </a></strong>
+            <div>Artifact: ${artifactName}</div>
+            <div>Severity: ${item.vulnerability.severity}</div>
+            <div>Namespace: ${item.vulnerability.namespace}</div>
+            <div>EPSS: ${epss}</div>
+            <div>Percentile: ${percentileFormatted}</div>
+            <div>Risk Score: ${riskFormatted}</div>
+            <div>Fix Status: <strong>${fixState}</strong></div>
+          </div>
+        `;
+      }).join("");
+      return `<details><summary>${cveId} (${items.length})</summary>${entries}</details>`;
+    }).join("");
+
+    const container = document.getElementById("cve-list");
+    container.classList.add("cve-group");
+    container.innerHTML = list;
+    document.getElementById("resultsCount").textContent =
+      `${filteredData.length} matches | CVEs: ${uniqueCves.size} | Artifacts: ${uniqueArtifacts.size}`;
+    const pagination = document.getElementById("pagination");
+    pagination.innerHTML = "";
+    pagination.style.display = "none";
+    return;
+  } else {
+    document.getElementById("cve-list").classList.remove("cve-group");
   }
 
   const totalPages = Math.ceil(filteredData.length / resultsPerPage);
@@ -134,7 +191,7 @@ function render() {
   document.getElementById("cve-list").innerHTML = list;
 
   document.getElementById("resultsCount").textContent =
-  `Showing ${start + 1}-${Math.min(end, filteredData.length)} of ${filteredData.length} results`;
+  `Showing ${start + 1}-${Math.min(end, filteredData.length)} of ${filteredData.length} results | CVEs: ${uniqueCves.size} | Artifacts: ${uniqueArtifacts.size}`;
 
   const pagination = document.getElementById("pagination");
   pagination.style.display = "";
