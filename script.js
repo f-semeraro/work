@@ -12,10 +12,14 @@ fileInput.addEventListener('change', (event) => {
   reader.onload = (e) => {
     try {
       const json = JSON.parse(e.target.result);
-      cveData = Array.isArray(json.matches) ? json.matches : [];
+      if (!json.spdxVersion || !Array.isArray(json.matches)) {
+        alert('Invalid SPDX JSON: missing required fields');
+        return;
+      }
+      cveData = json.matches;
       applyFilters();
     } catch (err) {
-      alert('ERROR parsing JSON file');
+      alert('ERROR parsing JSON file: ' + err.message);
     }
   };
   reader.readAsText(file);
@@ -32,6 +36,25 @@ document.getElementById('riskScore').addEventListener('input', applyFilters);
 
 document.querySelectorAll('input[name="severity"]').forEach(cb => cb.addEventListener('change', applyFilters));
 document.querySelectorAll('input[name="fixstate"]').forEach(cb => cb.addEventListener('change', applyFilters));
+
+// Accessible dropdown menus
+document.querySelectorAll('.dropdown-toggle').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const dropdown = btn.parentElement;
+    const open = dropdown.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open);
+  });
+});
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.dropdown')) {
+    document.querySelectorAll('.dropdown.open').forEach(dd => {
+      dd.classList.remove('open');
+      const toggle = dd.querySelector('.dropdown-toggle');
+      if (toggle) toggle.setAttribute('aria-expanded', 'false');
+    });
+  }
+});
 
 function applyFilters() {
   const selectedSeverities = Array.from(document.querySelectorAll('input[name="severity"]:checked')).map(cb => cb.value);
@@ -87,14 +110,23 @@ function render() {
   const table = $('#cveTable').DataTable({
     data: dataSet,
     columns: [
-      { data: 'cve', render: data => `<a href="https://nvd.nist.gov/vuln/detail/${data}" target="_blank">${data}</a>` },
-      { data: 'artifact' },
-      { data: 'severity' },
-      { data: 'namespace' },
-      { data: 'epss' },
+      {
+        data: 'cve',
+        render: data => {
+          const a = document.createElement('a');
+          a.href = `https://nvd.nist.gov/vuln/detail/${encodeURIComponent(data)}`;
+          a.target = '_blank';
+          a.textContent = data;
+          return a;
+        }
+      },
+      { data: 'artifact', render: $.fn.dataTable.render.text() },
+      { data: 'severity', render: $.fn.dataTable.render.text() },
+      { data: 'namespace', render: $.fn.dataTable.render.text() },
+      { data: 'epss', render: data => typeof data === 'number' ? data.toString() : 'n/a' },
       { data: 'percentile', render: data => typeof data === 'number' ? (data * 100).toFixed(2) + '%' : 'n/a' },
       { data: 'risk', render: data => typeof data === 'number' ? data.toFixed(2) : 'n/a' },
-      { data: 'fix' }
+      { data: 'fix', render: $.fn.dataTable.render.text() }
     ],
     pageLength: resultsPerPage,
     lengthChange: false,
@@ -106,10 +138,10 @@ function render() {
         rows.nodes().each(r => {
           r.style.display = collapsed ? 'none' : '';
         });
-        return $('<tr/>')
-          .append(`<td colspan="8">${group} (${rows.count()})</td>`)
-          .attr('data-name', group)
-          .toggleClass('collapsed', collapsed);
+        const tr = $('<tr/>').attr('data-name', group).toggleClass('collapsed', collapsed);
+        const td = $('<td/>').attr('colspan', 8).text(`${group} (${rows.count()})`);
+        tr.append(td);
+        return tr;
       }
     }
   });
