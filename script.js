@@ -1,8 +1,13 @@
 let cveData = [];
 let filteredData = [];
 <<<<<<< HEAD
+<<<<<<< HEAD
 let groupByCve = false;
 let collapsedGroups = {};
+=======
+let currentPage = 1;
+let resultsPerPage = 50;
+>>>>>>> parent of 774c7f0 (Use DataTables for CVE listing)
 =======
 let currentPage = 1;
 let resultsPerPage = 50;
@@ -26,11 +31,14 @@ document.getElementById("fileInput").addEventListener("change", (event) => {
 
 document.getElementById("perPage").addEventListener("change", () => {
   currentPage = 1;
+<<<<<<< HEAD
   render();
 });
 
 document.getElementById("groupToggle").addEventListener("change", (e) => {
   groupByCve = e.target.checked;
+=======
+>>>>>>> parent of 774c7f0 (Use DataTables for CVE listing)
   render();
 });
 
@@ -114,6 +122,7 @@ function render() {
   }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   collapsedGroups = {};
 
   const config = {
@@ -153,6 +162,12 @@ function render() {
   const currentGroups = groups.slice(start, end);
 >>>>>>> parent of 774c7f0 (Use DataTables for CVE listing)
 
+=======
+  const start = (currentPage - 1) * resultsPerPage;
+  const end = start + resultsPerPage;
+  const currentGroups = groups.slice(start, end);
+
+>>>>>>> parent of 774c7f0 (Use DataTables for CVE listing)
   const list = currentGroups.map(([cveId, items]) => {
     const entries = items.map(item => {
       const epss = item.vulnerability.epss?.[0]?.epss ?? "n/a";

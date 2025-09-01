@@ -66,50 +66,8 @@ h1 {
   margin-right: 5px;
 }
 
-#cve-list {
+#cveTable {
   padding: 20px;
-}
-
-.cve-group details {
-  margin: 10px 0;
-  padding: 5px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-}
-
-.cve-group summary {
-  padding: 5px;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.cve-entry {
-  background-color: white;
-  border: 1px solid #ddd;
-  border-left: 5px solid #005f73;
-  margin: 10px 0;
-  padding: 15px;
-  border-radius: 5px;
-}
-
-#pagination {
-  display: inline-block;
-  margin: 0 10px;
-}
-
-#pagination button {
-  padding: 6px 12px;
-  margin-left: 5px;
-  border: none;
-  background-color: #005f73;
-  color: white;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-#pagination button[disabled] {
-  background-color: #aaa;
-  cursor: not-allowed;
 }
 
 
