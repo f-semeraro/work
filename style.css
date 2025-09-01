@@ -86,25 +86,6 @@ h1 {
   border-radius: 5px;
 }
 
-#pagination {
-  display: inline-block;
-  margin: 0 10px;
-}
-
-#pagination button {
-  padding: 6px 12px;
-  margin-left: 5px;
-  border: none;
-  background-color: #005f73;
-  color: white;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-#pagination button[disabled] {
-  background-color: #aaa;
-  cursor: not-allowed;
-}
 
 /* Dropdown menu */
 .dropdown {
