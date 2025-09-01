@@ -1,7 +1,12 @@
 let cveData = [];
 let filteredData = [];
+<<<<<<< HEAD
 let groupByCve = false;
 let collapsedGroups = {};
+=======
+let currentPage = 1;
+let resultsPerPage = 50;
+>>>>>>> parent of 774c7f0 (Use DataTables for CVE listing)
 
 document.getElementById("fileInput").addEventListener("change", (event) => {
   const file = event.target.files[0];
@@ -20,6 +25,7 @@ document.getElementById("fileInput").addEventListener("change", (event) => {
 });
 
 document.getElementById("perPage").addEventListener("change", () => {
+  currentPage = 1;
   render();
 });
 
@@ -44,7 +50,18 @@ document.getElementById("percentileThreshold").addEventListener("input", applyFi
 
 document.getElementById("riskScore").addEventListener("input", applyFilters);
 
+document.getElementById("collapseAll").addEventListener("click", () => {
+  document.querySelectorAll("#cve-list details").forEach(d => d.open = false);
+});
+
+document.getElementById("expandAll").addEventListener("click", () => {
+  document.querySelectorAll("#cve-list details").forEach(d => d.open = true);
+});
+
+
+
 function applyFilters() {
+  currentPage = 1;
   const selectedSeverities = Array.from(document.querySelectorAll('input[name="severity"]:checked')).map(cb => cb.value);
   const selectedFixStates = Array.from(document.querySelectorAll('input[name="fixstate"]:checked')).map(cb => cb.value);
   const searchId = document.getElementById("searchId").value.toLowerCase();
@@ -70,69 +87,33 @@ function applyFilters() {
 
 
 function render() {
-  const resultsPerPage = parseInt(document.getElementById("perPage").value);
+  resultsPerPage = parseInt(document.getElementById("perPage").value);
   const uniqueCves = new Set(filteredData.map(f => f.vulnerability.id));
   const uniqueArtifacts = new Set(filteredData.map(f => f.artifact?.id));
 
-  const tableBody = document.querySelector("#cveTable tbody");
-  tableBody.innerHTML = "";
-
   if (filteredData.length === 0) {
-    if ($.fn.dataTable.isDataTable('#cveTable')) {
-      $('#cveTable').DataTable().clear().destroy();
-    }
+    document.getElementById("cve-list").innerHTML = "<div class=\"no-results\">No results found.</div>";
     document.getElementById("resultsCount").textContent = "No results";
+    const pagination = document.getElementById("pagination");
+    pagination.innerHTML = "";
+    pagination.style.display = "none";
     return;
   }
 
-  filteredData.forEach(item => {
-    const row = document.createElement('tr');
+  // Using <details> for an accessible, keyboard-friendly disclosure of groups
+  const grouped = filteredData.reduce((acc, item) => {
+    const id = item.vulnerability.id;
+    (acc[id] = acc[id] || []).push(item);
+    return acc;
+  }, {});
 
-    const cveCell = document.createElement('td');
-    const link = document.createElement('a');
-    link.href = `https://nvd.nist.gov/vuln/detail/${item.vulnerability.id}`;
-    link.textContent = item.vulnerability.id;
-    link.target = "_blank";
-    cveCell.appendChild(link);
-    row.appendChild(cveCell);
-
-    const artifactCell = document.createElement('td');
-    artifactCell.textContent = item.artifact?.id ?? 'Unknown';
-    row.appendChild(artifactCell);
-
-    const severityCell = document.createElement('td');
-    severityCell.textContent = item.vulnerability.severity;
-    row.appendChild(severityCell);
-
-    const namespaceCell = document.createElement('td');
-    namespaceCell.textContent = item.vulnerability.namespace;
-    row.appendChild(namespaceCell);
-
-    const epssCell = document.createElement('td');
-    epssCell.textContent = item.vulnerability.epss?.[0]?.epss ?? 'n/a';
-    row.appendChild(epssCell);
-
-    const percentileCell = document.createElement('td');
-    const percentile = item.vulnerability.epss?.[0]?.percentile;
-    percentileCell.textContent = typeof percentile === 'number' ? (percentile * 100).toFixed(2) + '%' : 'n/a';
-    row.appendChild(percentileCell);
-
-    const riskCell = document.createElement('td');
-    const risk = item.vulnerability.risk;
-    riskCell.textContent = typeof risk === 'number' ? risk.toFixed(2) : 'n/a';
-    row.appendChild(riskCell);
-
-    const fixCell = document.createElement('td');
-    fixCell.textContent = item.vulnerability.fix?.state ?? 'unknown';
-    row.appendChild(fixCell);
-
-    tableBody.appendChild(row);
-  });
-
-  if ($.fn.dataTable.isDataTable('#cveTable')) {
-    $('#cveTable').DataTable().clear().destroy();
+  const groups = Object.entries(grouped);
+  const totalPages = Math.ceil(groups.length / resultsPerPage);
+  if (currentPage > totalPages && totalPages > 0) {
+    currentPage = 1;
   }
 
+<<<<<<< HEAD
   collapsedGroups = {};
 
   const config = {
@@ -166,7 +147,53 @@ function render() {
       table.draw(false);
     });
   }
+=======
+  const start = (currentPage - 1) * resultsPerPage;
+  const end = start + resultsPerPage;
+  const currentGroups = groups.slice(start, end);
+>>>>>>> parent of 774c7f0 (Use DataTables for CVE listing)
 
+  const list = currentGroups.map(([cveId, items]) => {
+    const entries = items.map(item => {
+      const epss = item.vulnerability.epss?.[0]?.epss ?? "n/a";
+      const artifactName = item.artifact?.id ?? "Unknown";
+      const percentile = item.vulnerability.epss?.[0]?.percentile ?? "n/a";
+      const percentileFormatted = typeof percentile === 'number' ? (percentile * 100).toFixed(2) + '%' : "n/a";
+      const risk = item.vulnerability.risk ?? "n/a";
+      const riskFormatted = typeof risk === 'number' ? risk.toFixed(2) : "n/a";
+      const fixState = item.vulnerability.fix?.state ?? "unknown";
+      return `
+        <div class=\"cve-entry\">
+          <div>Artifact: ${artifactName}</div>
+          <div>Severity: ${item.vulnerability.severity}</div>
+          <div>Namespace: ${item.vulnerability.namespace}</div>
+          <div>EPSS: ${epss}</div>
+          <div>Percentile: ${percentileFormatted}</div>
+          <div>Risk Score: ${riskFormatted}</div>
+          <div>Fix Status: <strong>${fixState}</strong></div>
+        </div>
+      `;
+    }).join("");
+    const count = items.length > 1 ? ` (${items.length})` : "";
+    return `<details open><summary><a style=\"color: #005f73\" href=\"https://nvd.nist.gov/vuln/detail/${cveId}\" target=\"_blank\">${cveId}</a>${count}</summary>${entries}</details>`;
+  }).join("");
+
+  const container = document.getElementById("cve-list");
+  container.classList.add("cve-group");
+  container.innerHTML = list;
   document.getElementById("resultsCount").textContent =
-    `Matches: ${filteredData.length} | CVEs: ${uniqueCves.size} | Artifacts: ${uniqueArtifacts.size}`;
+    `Showing ${start + 1}-${Math.min(end, groups.length)} of ${groups.length} CVEs | Matches: ${filteredData.length} | Artifacts: ${uniqueArtifacts.size}`;
+
+  const pagination = document.getElementById("pagination");
+  pagination.style.display = "";
+  pagination.innerHTML = `
+    Page ${currentPage} of ${totalPages}
+    <button onclick=\"changePage(-1)\" ${currentPage === 1 ? "disabled" : ""}>⬅</button>
+    <button onclick=\"changePage(1)\" ${currentPage === totalPages ? "disabled" : ""}>➡</button>
+  `;
+}
+
+function changePage(delta) {
+  currentPage += delta;
+  render();
 }
