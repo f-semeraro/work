@@ -19,6 +19,7 @@ $(document).ready(function () {
   });
 
   table.rowGroup().disable();
+  let storedOrder = table.order();
 
   function loadData(json) {
     const rows = json.matches.map(item => ({
@@ -58,9 +59,18 @@ $(document).ready(function () {
   $("#groupBy").on("change", function () {
     const val = $(this).val();
     if (val) {
-      table.rowGroup().dataSrc(val).enable().draw();
+      if (!table.rowGroup().enabled()) {
+        storedOrder = table.order();
+      }
+      const colIndex = val === "id" ? 0 : 7;
+      table
+        .rowGroup()
+        .dataSrc(val)
+        .enable();
+      table.order([colIndex, "asc"]).draw();
     } else {
-      table.rowGroup().disable().draw();
+      table.rowGroup().disable();
+      table.order(storedOrder).draw();
     }
   });
 });
