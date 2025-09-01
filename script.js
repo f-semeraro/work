@@ -44,6 +44,10 @@ document.getElementById("collapseAll").addEventListener("click", () => {
   document.querySelectorAll("#cve-list details").forEach(d => d.open = false);
 });
 
+document.getElementById("expandAll").addEventListener("click", () => {
+  document.querySelectorAll("#cve-list details").forEach(d => d.open = true);
+});
+
 
 
 function applyFilters() {
