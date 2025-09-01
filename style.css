@@ -41,6 +41,12 @@ h1 {
   flex-wrap: wrap;
 }
 
+.right-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
 #filters label {
   font-weight: 500;
 }
