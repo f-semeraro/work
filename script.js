@@ -117,7 +117,7 @@ function render() {
           a.href = `https://nvd.nist.gov/vuln/detail/${encodeURIComponent(data)}`;
           a.target = '_blank';
           a.textContent = data;
-          return a;
+          return a.outerHTML;
         }
       },
       { data: 'artifact', render: $.fn.dataTable.render.text() },
@@ -138,7 +138,8 @@ function render() {
         rows.nodes().each(r => {
           r.style.display = collapsed ? 'none' : '';
         });
-        const tr = $('<tr/>').attr('data-name', group).toggleClass('collapsed', collapsed);
+        const tr = $('<tr/>').addClass('dtrg-start').attr('data-name', group)
+          .toggleClass('collapsed', collapsed);
         const td = $('<td/>').attr('colspan', 8).text(`${group} (${rows.count()})`);
         tr.append(td);
         return tr;
