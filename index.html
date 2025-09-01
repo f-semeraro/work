@@ -6,11 +6,18 @@
   <title>Vulnerability Viewer</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/rowgroup/1.4.1/css/rowGroup.dataTables.min.css">
 </head>
 <body>
   <h1>Aesys Vulnerability Viewer</h1>
 
   <input type="file" id="fileInput" accept=".json">
+  <label for="groupBy">Raggruppa per:</label>
+  <select id="groupBy">
+    <option value="">Nessuno</option>
+    <option value="id">CVE ID</option>
+    <option value="artifact">Artifact</option>
+  </select>
 
   <table id="cveTable" class="display">
     <thead>
@@ -30,6 +37,7 @@
 
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/rowgroup/1.4.1/js/dataTables.rowGroup.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

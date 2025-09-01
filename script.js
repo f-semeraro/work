@@ -11,8 +11,14 @@ $(document).ready(function () {
       { title: "Fix Status", data: "fix" },
       { title: "Artifact", data: "artifact" }
     ],
+    rowGroup: {
+      dataSrc: "artifact",
+      emptyDataGroup: "Unknown"
+    },
     pageLength: 50
   });
+
+  table.rowGroup().disable();
 
   function loadData(json) {
     const rows = json.matches.map(item => ({
@@ -47,6 +53,15 @@ $(document).ready(function () {
       }
     };
     reader.readAsText(file);
+  });
+
+  $("#groupBy").on("change", function () {
+    const val = $(this).val();
+    if (val) {
+      table.rowGroup().dataSrc(val).enable().draw();
+    } else {
+      table.rowGroup().disable().draw();
+    }
   });
 });
 
