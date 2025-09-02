@@ -5,79 +5,47 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vulnerability Viewer</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/rowgroup/1.4.1/css/rowGroup.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.4.0/css/fixedHeader.dataTables.min.css">
 </head>
 <body>
-  <h1> Aesys Vulnerability Viewer</h1>
+  <h1>Aesys Vulnerability Viewer</h1>
 
-<div id="filters">
-  <div class="filter-row">
+  <div id="controls">
     <input type="file" id="fileInput" accept=".json">
+    <label for="groupBy">Raggruppa per:</label>
+    <select id="groupBy">
+      <option value="">Nessuno</option>
+      <option value="id">CVE ID</option>
+      <option value="artifact">Artifact</option>
+    </select>
 
-    <div class="dropdown">
-      <button class="dropdown-toggle" type="button">Severity ▼</button>
-      <div class="dropdown-menu">
-        <label><input type="checkbox" name="severity" value="Critical"> Critical</label>
-        <label><input type="checkbox" name="severity" value="High"> High</label>
-        <label><input type="checkbox" name="severity" value="Medium"> Medium</label>
-        <label><input type="checkbox" name="severity" value="Low"> Low</label>
-      </div>
-    </div>
-
-    <div class="dropdown">
-  <button class="dropdown-toggle" type="button">Fix Status ▼</button>
-  <div class="dropdown-menu">
-    <label><input type="checkbox" name="fixstate" value="fixed"> Fixed</label>
-    <label><input type="checkbox" name="fixstate" value="not-fixed"> Not Fixed</label>
-    <label><input type="checkbox" name="fixstate" value="unknown"> Unknown</label>
-  </div>
-</div>
-
-
-   <div class="form-group-vertical">
-  <label for="riskThreshold">EPSS ></label>
-  <input type="number" id="riskThreshold" step="0.01" min="0" max="1" placeholder="e.g. 0.7">
-</div>
-
-<div class="form-group-vertical">
-  <label for="percentileThreshold">Percentile ></label>
-  <input type="number" id="percentileThreshold" step="0.0001" min="0" max="1" placeholder="e.g. 0.95">
-</div>
-
-<div class="form-group-vertical">
-  <label for="riskScore">Risk ></label>
-  <input type="number" id="riskScore" step="0.01" min="0" max="100" placeholder="e.g. 70">
-</div>
-
-
-<div class="form-group-vertical">
-  <label for="searchId">Search CVE ID</label>
-  <input type="text" id="searchId" placeholder="e.g. CVE-2024-1234">
-</div>
-
+    <button id="collapseAll" disabled>Riduci tutti</button>
+    <button id="expandAll" disabled>Espandi tutti</button>
   </div>
 
-  <div class="filter-row bottom-row">
-    <div id="resultsCount" style="font-weight: bold;"></div>
-    <div class="right-controls">
-      <button id="expandAll" class="filter-button">Expand all</button>
-      <button id="collapseAll" class="filter-button">Collapse all</button>
-      <div class="form-group">
-        <label for="perPage">Results per page</label>
-        <select id="perPage">
-          <option value="10">10</option>
-          <option value="25">25</option>
-          <option value="50" selected>50</option>
-          <option value="100">100</option>
-        </select>
-      </div>
-      <div id="pagination"></div>
-    </div>
-  </div>
-</div>
+  <table id="cveTable" class="display">
+    <thead>
+      <tr>
+        <th>CVE ID</th>
+        <th>Severity</th>
+        <th>Namespace</th>
+        <th>EPSS</th>
+        <th>Percentile</th>
+        <th>Risk Score</th>
+        <th>Fix Status</th>
+        <th>Artifact</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
-
-<div id="cve-list"></div>
-
-<script src="script.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/rowgroup/1.4.1/js/dataTables.rowGroup.min.js"></script>
+  <script src="https://cdn.datatables.net/fixedheader/3.4.0/js/dataTables.fixedHeader.min.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
+
