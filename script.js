@@ -7,10 +7,15 @@ $(document).ready(function () {
   let storedOrder = [];                  // previous sorting before grouping
 
   // --- DataTables initialisation ---
-  const table = $("#cveTable").DataTable({
+  const table = new DataTable("#cveTable", {
     fixedHeader: {
       header: true,
       headerOffset: HEADER_OFFSET
+    },
+    columnControl: ['order', 'searchDropdown'],
+    ordering: {
+      indicators: false,
+      handler: false
     },
     data: [],
     columns: [
@@ -53,36 +58,18 @@ $(document).ready(function () {
           .toggleClass("collapsed", collapsed);
       }
     },
-      pageLength: 50,
-      columnDefs: [
-        { targets: [3, 4, 5], type: 'num' }
-      ],
-      dom: 'QPlfrtip',
-      searchBuilder: {
-        columns: [3, 4, 5]
-      },
-      searchPanes: {
-        columns: [1, 6]
-      }
-    });
-
-  // Add a text input to each header cell for column-specific filtering
-  table.columns().every(function () {
-    const column = this;
-    const header = $(column.header());
-    const title = header.text();
-
-    header.html(`${title}<br><input type="text" placeholder="Filtra ${title}" />`);
-
-    $("input", header).on("keyup change", function () {
-      if (column.search() !== this.value) {
-        column.search(this.value).draw();
-      }
-    });
+    pageLength: 50,
+    columnDefs: [
+      { targets: [3, 4, 5], type: 'num' }
+    ],
+    dom: 'QPlfrtip',
+    searchBuilder: {
+      columns: [3, 4, 5]
+    },
+    searchPanes: {
+      columns: [1, 6]
+    }
   });
-
-  // Adjust the fixed header to account for the new inputs
-  table.fixedHeader.adjust();
 
   table.rowGroup().disable();
 
