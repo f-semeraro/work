@@ -1,10 +1,14 @@
 $(document).ready(function () {
   const columnCount = 8;
   let collapsedGroups = {};
+  let severitySelect, fixSelect;
+  const headerOffset = $("#controls").outerHeight();
 
-    let severitySelect, fixSelect;
-
-    const table = $("#cveTable").DataTable({
+  const table = $("#cveTable").DataTable({
+      fixedHeader: {
+        header: true,
+        headerOffset: headerOffset
+      },
       data: [],
       columns: [
         {
@@ -21,9 +25,9 @@ $(document).ready(function () {
         { title: "Artifact", data: "artifact" }
       ],
       rowGroup: {
-      dataSrc: "artifact",
-      emptyDataGroup: "Unknown",
-      startRender: function (rows, group) {
+        dataSrc: "artifact",
+        emptyDataGroup: "Unknown",
+        startRender: function (rows, group) {
           const collapsed = !!collapsedGroups[group];
           rows.nodes().each(r => {
             if (collapsed) $(r).hide();
@@ -52,41 +56,44 @@ $(document).ready(function () {
               column.search(val ? '^' + val + '$' : '', true, false).draw();
             });
           $(column.header()).prepend(label + '<br>');
-          if (column.index() === 1) severitySelect = select; else fixSelect = select;
+          if (column.index() === 1) severitySelect = select;
+          else fixSelect = select;
         });
+        table.fixedHeader.adjust();
       }
     });
 
   table.rowGroup().disable();
   let storedOrder = table.order();
 
-    function updateFilters() {
-      [
-        { select: severitySelect, column: 1 },
-        { select: fixSelect, column: 6 }
-      ].forEach(function (item) {
-        item.select.find('option:not(:first)').remove();
-        table.column(item.column).data().unique().sort().each(function (d) {
-          item.select.append(`<option value="${d}">${d}</option>`);
-        });
+  function updateFilters() {
+    [
+      { select: severitySelect, column: 1 },
+      { select: fixSelect, column: 6 }
+    ].forEach(function (item) {
+      item.select.find('option:not(:first)').remove();
+      table.column(item.column).data().unique().sort().each(function (d) {
+        item.select.append(`<option value="${d}">${d}</option>`);
       });
-    }
+    });
+    table.fixedHeader.adjust();
+  }
 
-    function loadData(json) {
-      const rows = json.matches.map(item => ({
-        id: item.vulnerability.id,
-        severity: item.vulnerability.severity,
-        namespace: item.vulnerability.namespace,
-        epss: item.vulnerability.epss?.[0]?.epss ?? "n/a",
-        percentile: item.vulnerability.epss?.[0]?.percentile ?? "n/a",
-        risk: item.vulnerability.risk ?? "n/a",
-        fix: item.vulnerability.fix?.state || "unknown",
-        artifact: item.artifact?.id ?? "Unknown"
-      }));
-      table.clear();
-      table.rows.add(rows).draw();
-      updateFilters();
-    }
+  function loadData(json) {
+    const rows = json.matches.map(item => ({
+      id: item.vulnerability.id,
+      severity: item.vulnerability.severity,
+      namespace: item.vulnerability.namespace,
+      epss: item.vulnerability.epss?.[0]?.epss ?? "n/a",
+      percentile: item.vulnerability.epss?.[0]?.percentile ?? "n/a",
+      risk: item.vulnerability.risk ?? "n/a",
+      fix: item.vulnerability.fix?.state || "unknown",
+      artifact: item.artifact?.id ?? "Unknown"
+    }));
+    table.clear();
+    table.rows.add(rows).draw();
+    updateFilters();
+  }
 
   fetch("test.json")
     .then(r => r.json())
@@ -108,44 +115,44 @@ $(document).ready(function () {
     reader.readAsText(file);
   });
 
-    $("#groupBy").on("change", function () {
-      collapsedGroups = {};
-      const val = $(this).val();
-      if (val) {
-        if (!table.rowGroup().enabled()) {
-          storedOrder = table.order();
-        }
-        const colIndex = val === "id" ? 0 : 7;
-        table.rowGroup().dataSrc(val).enable();
-        table.order([colIndex, "asc"]).draw();
-        $("#collapseAll, #expandAll").prop("disabled", false);
-      } else {
-        table.rowGroup().disable();
-        table.order(storedOrder).draw();
-        $("#collapseAll, #expandAll").prop("disabled", true);
+  $("#groupBy").on("change", function () {
+    collapsedGroups = {};
+    const val = $(this).val();
+    if (val) {
+      if (!table.rowGroup().enabled()) {
+        storedOrder = table.order();
       }
-    });
+      const colIndex = val === "id" ? 0 : 7;
+      table.rowGroup().dataSrc(val).enable();
+      table.order([colIndex, "asc"]).draw();
+      $("#collapseAll, #expandAll").prop("disabled", false);
+    } else {
+      table.rowGroup().disable();
+      table.order(storedOrder).draw();
+      $("#collapseAll, #expandAll").prop("disabled", true);
+    }
+  });
 
-    $("#cveTable tbody").on("click", "tr.dtrg-start", function () {
-      const name = $(this).data("name");
-      collapsedGroups[name] = !collapsedGroups[name];
-      table.draw(false);
-    });
+  $("#cveTable tbody").on("click", "tr.dtrg-start", function () {
+    const name = $(this).data("name");
+    collapsedGroups[name] = !collapsedGroups[name];
+    table.draw(false);
+  });
 
-    $("#collapseAll").on("click", function () {
-      if (!table.rowGroup().enabled()) return;
-      const src = table.rowGroup().dataSrc();
-      const colIndex = src === "id" ? 0 : 7;
-      collapsedGroups = {};
-      table.column(colIndex, { search: 'applied' }).data().unique().each(function (d) {
-        collapsedGroups[d] = true;
-      });
-      table.draw(false);
+  $("#collapseAll").on("click", function () {
+    if (!table.rowGroup().enabled()) return;
+    const src = table.rowGroup().dataSrc();
+    const colIndex = src === "id" ? 0 : 7;
+    collapsedGroups = {};
+    table.column(colIndex, { search: 'applied' }).data().unique().each(function (d) {
+      collapsedGroups[d] = true;
     });
+    table.draw(false);
+  });
 
-    $("#expandAll").on("click", function () {
-      if (!table.rowGroup().enabled()) return;
-      collapsedGroups = {};
-      table.draw(false);
-    });
+  $("#expandAll").on("click", function () {
+    if (!table.rowGroup().enabled()) return;
+    collapsedGroups = {};
+    table.draw(false);
+  });
 });

@@ -14,7 +14,18 @@ h1 {
   font-size: 1.5rem;
 }
 
-#fileInput, #groupBy, #collapseAll, #expandAll {
+#controls {
+  position: sticky;
+  top: 0;
+  background-color: #f9f9f9;
+  z-index: 1000;
+  padding: 10px 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+#controls > * {
   margin: 10px 20px;
 }
 
