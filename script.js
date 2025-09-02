@@ -12,7 +12,7 @@ $(document).ready(function () {
       header: true,
       headerOffset: HEADER_OFFSET
     },
-    columnControl: ['order', 'searchDropdown'],
+    columnControl: ['order', { extend: 'searchDropdown', ajaxOnly: false }],
     ordering: {
       indicators: false,
       handler: false
