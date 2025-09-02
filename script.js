@@ -151,3 +151,44 @@ function changePage(delta) {
   currentPage += delta;
   render();
 }
+
+$(document).ready(function () {
+  const table = $('#cveTable').DataTable({
+    orderCellsTop: true,
+    initComplete: function () {
+      const api = this.api();
+      [1, 6].forEach(function (colIdx) {
+        const column = api.column(colIdx);
+        const cell = $('#cveTable thead tr:eq(1) th').eq(colIdx);
+        const select = $('<select class="dt-select"><option value=""></option></select>')
+          .appendTo(cell)
+          .on('change', function () {
+            const val = $.fn.dataTable.util.escapeRegex($(this).val());
+            column.search(val ? '^' + val + '$' : '', true, false).draw();
+          });
+
+        column.data().unique().sort().each(function (d) {
+          if (d) {
+            select.append('<option value="' + d + '">' + d + '</option>');
+          }
+        });
+      });
+    }
+  });
+
+  window.updateFilters = function () {
+    [1, 6].forEach(function (colIdx) {
+      const column = table.column(colIdx);
+      const cell = $('#cveTable thead tr:eq(1) th').eq(colIdx);
+      const select = cell.find('select');
+      const current = select.val();
+      select.empty().append('<option value=""></option>');
+      column.data().unique().sort().each(function (d) {
+        if (d) {
+          select.append('<option value="' + d + '">' + d + '</option>');
+        }
+      });
+      if (current) select.val(current);
+    });
+  };
+});

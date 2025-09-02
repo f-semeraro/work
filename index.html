@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vulnerability Viewer</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 </head>
 <body>
   <h1> Aesys Vulnerability Viewer</h1>
@@ -75,9 +76,34 @@
   </div>
 </div>
 
+<table id="cveTable" class="display">
+  <thead>
+    <tr>
+      <th>CVE</th>
+      <th>Severity</th>
+      <th>EPSS</th>
+      <th>Percentile</th>
+      <th>Risk Score</th>
+      <th>Artifact</th>
+      <th>Fix Status</th>
+    </tr>
+    <tr>
+      <th>CVE</th>
+      <th></th>
+      <th>EPSS</th>
+      <th>Percentile</th>
+      <th>Risk Score</th>
+      <th>Artifact</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
 
 <div id="cve-list"></div>
 
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
