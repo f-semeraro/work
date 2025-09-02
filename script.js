@@ -59,7 +59,7 @@ $(document).ready(function () {
           if (column.index() === 1) severitySelect = select;
           else fixSelect = select;
         });
-        table.fixedHeader.adjust();
+        api.fixedHeader.adjust();
       }
     });
 
