@@ -14,16 +14,20 @@ h1 {
   font-size: 1.5rem;
 }
 
-#fileInput, #groupBy, #severityFilter, #fixFilter {
+#fileInput, #groupBy, #collapseAll, #expandAll {
   margin: 10px 20px;
 }
 
 tr.dtrg-start {
   cursor: pointer;
-  background-color: #e0e0e0;
 }
 
-tr.dtrg-start.collapsed {
+tr.dtrg-start td {
+  background-color: #cbd5e1;
+  font-weight: bold;
+}
+
+tr.dtrg-start.collapsed td {
   opacity: 0.7;
 }
 
