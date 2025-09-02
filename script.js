@@ -66,6 +66,24 @@ $(document).ready(function () {
       }
     });
 
+  // Add a text input to each header cell for column-specific filtering
+  table.columns().every(function () {
+    const column = this;
+    const header = $(column.header());
+    const title = header.text();
+
+    header.html(`${title}<br><input type="text" placeholder="Filtra ${title}" />`);
+
+    $("input", header).on("keyup change", function () {
+      if (column.search() !== this.value) {
+        column.search(this.value).draw();
+      }
+    });
+  });
+
+  // Adjust the fixed header to account for the new inputs
+  table.fixedHeader.adjust();
+
   table.rowGroup().disable();
 
   // --- Helpers ---------------------------------------------------------

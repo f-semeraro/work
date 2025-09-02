@@ -51,3 +51,9 @@ tr.dtrg-start.collapsed td {
   margin: 20px auto;
 }
 
+/* Inputs used for column filtering in the header */
+#cveTable thead input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
