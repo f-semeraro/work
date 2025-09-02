@@ -4,7 +4,6 @@ $(document).ready(function () {
   const HEADER_OFFSET = $("#controls").outerHeight();
 
   let collapsedGroups = {};              // track which row groups are collapsed
-  let severitySelect, fixSelect;         // references to header filter <select>s
   let storedOrder = [];                  // previous sorting before grouping
 
   // --- DataTables initialisation ---
@@ -55,27 +54,9 @@ $(document).ready(function () {
       }
     },
     pageLength: 50,
-    // build header filters once the table is ready
-    initComplete: function () {
-      const api = this.api();
-      api.columns([1, 6]).every(function () {
-        const column = this;
-        const label = column.index() === 1 ? "Severity" : "Fix Status";
-
-        // create the <select> filter and wire up searching
-        const select = $('<select><option value=""></option></select>')
-          .appendTo($(column.header()).empty())
-          .on("change", function () {
-            const val = $.fn.dataTable.util.escapeRegex($(this).val());
-            column.search(val ? "^" + val + "$" : "", true, false).draw();
-          });
-
-        $(column.header()).prepend(label + "<br>");
-        if (column.index() === 1) severitySelect = select;
-        else fixSelect = select;
-      });
-
-      api.fixedHeader.adjust();
+    dom: 'Plfrtip',
+    searchPanes: {
+      columns: [1, 6]
     }
   });
 
@@ -83,26 +64,7 @@ $(document).ready(function () {
 
   // --- Helpers ---------------------------------------------------------
 
-  // Populate header <select> filters with unique values from the columns
-  function updateFilters() {
-    [
-      { select: severitySelect, column: 1 },
-      { select: fixSelect, column: 6 }
-    ].forEach(function (item) {
-      item.select.find("option:not(:first)").remove();
-      table
-        .column(item.column)
-        .data()
-        .unique()
-        .sort()
-        .each(function (d) {
-          item.select.append(`<option value="${d}">${d}</option>`);
-        });
-    });
-    table.fixedHeader.adjust();
-  }
-
-  // Load JSON data into the table and refresh filters
+  // Load JSON data into the table and refresh search panes
   function loadData(json) {
     const rows = json.matches.map(item => ({
       id: item.vulnerability.id,
@@ -117,7 +79,9 @@ $(document).ready(function () {
 
     table.clear();
     table.rows.add(rows).draw();
-    updateFilters();
+    table.searchPanes.clearSelections();
+    table.searchPanes.rebuildPane();
+    table.fixedHeader.adjust();
   }
 
   // --- Initial data load ----------------------------------------------
