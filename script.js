@@ -62,13 +62,7 @@ $(document).ready(function () {
     columnDefs: [
       { targets: [3, 4, 5], type: 'num' }
     ],
-    dom: 'QPlfrtip',
-    searchBuilder: {
-      columns: [3, 4, 5]
-    },
-    searchPanes: {
-      columns: [1, 6]
-    }
+    dom: 'lfrtip'
   });
 
   table.rowGroup().disable();
@@ -90,8 +84,6 @@ $(document).ready(function () {
 
     table.clear();
     table.rows.add(rows).draw();
-    table.searchPanes.clearSelections();
-    table.searchPanes.rebuildPane();
     table.fixedHeader.adjust();
   }
 
