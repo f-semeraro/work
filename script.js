@@ -1,8 +1,15 @@
 $(document).ready(function () {
+  const columnCount = 8;
+  let collapsedGroups = {};
+
   const table = $("#cveTable").DataTable({
     data: [],
     columns: [
-      { title: "CVE ID", data: "id" },
+      {
+        title: "CVE ID",
+        data: "id",
+        render: data => `<a href="https://nvd.nist.gov/vuln/detail/${data}" target="_blank">${data}</a>`
+      },
       { title: "Severity", data: "severity" },
       { title: "Namespace", data: "namespace" },
       { title: "EPSS", data: "epss" },
@@ -13,7 +20,21 @@ $(document).ready(function () {
     ],
     rowGroup: {
       dataSrc: "artifact",
-      emptyDataGroup: "Unknown"
+      emptyDataGroup: "Unknown",
+      startRender: function (rows, group) {
+        const collapsed = !!collapsedGroups[group];
+        rows.nodes().each(r => {
+          if (collapsed) $(r).hide();
+          else $(r).show();
+        });
+        let text = group || "Unknown";
+        const count = rows.count();
+        if (count > 1) text += ` (${count})`;
+        return $("<tr/>")
+          .append(`<td colspan="${columnCount}">${text}</td>`)
+          .attr("data-name", group)
+          .toggleClass("collapsed", collapsed);
+      }
     },
     pageLength: 50
   });
@@ -29,7 +50,7 @@ $(document).ready(function () {
       epss: item.vulnerability.epss?.[0]?.epss ?? "n/a",
       percentile: item.vulnerability.epss?.[0]?.percentile ?? "n/a",
       risk: item.vulnerability.risk ?? "n/a",
-      fix: item.vulnerability.fix?.state ?? "unknown",
+      fix: item.vulnerability.fix?.state || "unknown",
       artifact: item.artifact?.id ?? "Unknown"
     }));
     table.clear();
@@ -57,21 +78,32 @@ $(document).ready(function () {
   });
 
   $("#groupBy").on("change", function () {
+    collapsedGroups = {};
     const val = $(this).val();
     if (val) {
       if (!table.rowGroup().enabled()) {
         storedOrder = table.order();
       }
       const colIndex = val === "id" ? 0 : 7;
-      table
-        .rowGroup()
-        .dataSrc(val)
-        .enable();
+      table.rowGroup().dataSrc(val).enable();
       table.order([colIndex, "asc"]).draw();
     } else {
       table.rowGroup().disable();
       table.order(storedOrder).draw();
     }
   });
-});
 
+  $("#cveTable tbody").on("click", "tr.dtrg-start", function () {
+    const name = $(this).data("name");
+    collapsedGroups[name] = !collapsedGroups[name];
+    table.draw(false);
+  });
+
+  $("#severityFilter").on("change", function () {
+    table.column(1).search(this.value).draw();
+  });
+
+  $("#fixFilter").on("change", function () {
+    table.column(6).search(this.value).draw();
+  });
+});

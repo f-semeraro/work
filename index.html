@@ -19,6 +19,23 @@
     <option value="artifact">Artifact</option>
   </select>
 
+  <label for="severityFilter">Filtra Severity:</label>
+  <select id="severityFilter">
+    <option value="">Tutte</option>
+    <option value="Critical">Critical</option>
+    <option value="High">High</option>
+    <option value="Medium">Medium</option>
+    <option value="Low">Low</option>
+  </select>
+
+  <label for="fixFilter">Filtra Fix Status:</label>
+  <select id="fixFilter">
+    <option value="">Tutti</option>
+    <option value="fixed">fixed</option>
+    <option value="not-fixed">not-fixed</option>
+    <option value="unknown">unknown</option>
+  </select>
+
   <table id="cveTable" class="display">
     <thead>
       <tr>

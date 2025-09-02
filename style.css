@@ -14,8 +14,17 @@ h1 {
   font-size: 1.5rem;
 }
 
-#fileInput, #groupBy {
+#fileInput, #groupBy, #severityFilter, #fixFilter {
   margin: 10px 20px;
+}
+
+tr.dtrg-start {
+  cursor: pointer;
+  background-color: #e0e0e0;
+}
+
+tr.dtrg-start.collapsed {
+  opacity: 0.7;
 }
 
 #cveTable {
