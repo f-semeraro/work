@@ -7,7 +7,7 @@ $(document).ready(function () {
   let storedOrder = [];                  // previous sorting before grouping
 
   // --- DataTables initialisation ---
-  const table = $("#cveTable").DataTable({
+  const table = new DataTable('#cveTable', {
     fixedHeader: {
       header: true,
       headerOffset: HEADER_OFFSET
@@ -28,6 +28,10 @@ $(document).ready(function () {
       { title: "Risk Score", data: "risk" },
       { title: "Fix Status", data: "fix" },
       { title: "Artifact", data: "artifact" }
+    ],
+    columnControl: [
+      { target: 0, content: ['order'] },
+      { target: 1, content: ['search'] }
     ],
     rowGroup: {
       dataSrc: "artifact",
@@ -57,7 +61,12 @@ $(document).ready(function () {
       columnDefs: [
         { targets: [3, 4, 5], type: 'num' }
       ],
-      dom: 'QPlfrtip',
+      layout: {
+        topStart: ['searchBuilder', 'searchPanes'],
+        topEnd: ['pageLength', 'search'],
+        bottomStart: ['info'],
+        bottomEnd: ['paging']
+      },
       searchBuilder: {
         columns: [3, 4, 5]
       },

@@ -51,3 +51,9 @@ tr.dtrg-start.collapsed td {
   margin: 20px auto;
 }
 
+/* Ensure column search inputs fill the header cell */
+#cveTable thead input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
