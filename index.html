@@ -12,6 +12,7 @@
 <body>
   <h1>Aesys Vulnerability Viewer</h1>
 
+  <!-- Control panel: file input, grouping selector and buttons -->
   <div id="controls">
     <input type="file" id="fileInput" accept=".json">
     <label for="groupBy">Raggruppa per:</label>
@@ -25,6 +26,7 @@
     <button id="expandAll" disabled>Espandi tutti</button>
   </div>
 
+  <!-- DataTables placeholder where rows will be injected -->
   <table id="cveTable" class="display">
     <thead>
       <tr>
@@ -41,6 +43,7 @@
     <tbody></tbody>
   </table>
 
+  <!-- Libraries: jQuery and DataTables -->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
   <script src="https://cdn.datatables.net/rowgroup/1.4.1/js/dataTables.rowGroup.min.js"></script>

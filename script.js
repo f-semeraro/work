@@ -1,84 +1,108 @@
 $(document).ready(function () {
-  const columnCount = 8;
-  let collapsedGroups = {};
-  let severitySelect, fixSelect;
-  const headerOffset = $("#controls").outerHeight();
+  // --- Constants and shared state ---
+  const COLUMN_COUNT = 8;                // number of columns in the table
+  const HEADER_OFFSET = $("#controls").outerHeight();
 
+  let collapsedGroups = {};              // track which row groups are collapsed
+  let severitySelect, fixSelect;         // references to header filter <select>s
+  let storedOrder = [];                  // previous sorting before grouping
+
+  // --- DataTables initialisation ---
   const table = $("#cveTable").DataTable({
-      fixedHeader: {
-        header: true,
-        headerOffset: headerOffset
+    fixedHeader: {
+      header: true,
+      headerOffset: HEADER_OFFSET
+    },
+    data: [],
+    columns: [
+      {
+        title: "CVE ID",
+        data: "id",
+        // link to the NIST CVE details page
+        render: data =>
+          `<a href="https://nvd.nist.gov/vuln/detail/${data}" target="_blank">${data}</a>`
       },
-      data: [],
-      columns: [
-        {
-          title: "CVE ID",
-          data: "id",
-          render: data => `<a href="https://nvd.nist.gov/vuln/detail/${data}" target="_blank">${data}</a>`
-        },
-        { title: "Severity", data: "severity" },
-        { title: "Namespace", data: "namespace" },
-        { title: "EPSS", data: "epss" },
-        { title: "Percentile", data: "percentile" },
-        { title: "Risk Score", data: "risk" },
-        { title: "Fix Status", data: "fix" },
-        { title: "Artifact", data: "artifact" }
-      ],
-      rowGroup: {
-        dataSrc: "artifact",
-        emptyDataGroup: "Unknown",
-        startRender: function (rows, group) {
-          const collapsed = !!collapsedGroups[group];
-          rows.nodes().each(r => {
-            if (collapsed) $(r).hide();
-            else $(r).show();
-          });
-          let text = group || "Unknown";
-          const count = rows.count();
-          if (count > 1) text += ` (${count})`;
-          const icon = collapsed ? "&#9654;" : "&#9660;";
-          return $("<tr/>")
-            .append(`<td colspan="${columnCount}">${icon} ${text}</td>`)
-            .attr("data-name", group)
-            .toggleClass("collapsed", collapsed);
-        }
-      },
-      pageLength: 50,
-      initComplete: function () {
-        const api = this.api();
-        api.columns([1, 6]).every(function () {
-          const column = this;
-          const label = column.index() === 1 ? 'Severity' : 'Fix Status';
-          const select = $('<select><option value=""></option></select>')
-            .appendTo($(column.header()).empty())
-            .on('change', function () {
-              const val = $.fn.dataTable.util.escapeRegex($(this).val());
-              column.search(val ? '^' + val + '$' : '', true, false).draw();
-            });
-          $(column.header()).prepend(label + '<br>');
-          if (column.index() === 1) severitySelect = select;
-          else fixSelect = select;
+      { title: "Severity", data: "severity" },
+      { title: "Namespace", data: "namespace" },
+      { title: "EPSS", data: "epss" },
+      { title: "Percentile", data: "percentile" },
+      { title: "Risk Score", data: "risk" },
+      { title: "Fix Status", data: "fix" },
+      { title: "Artifact", data: "artifact" }
+    ],
+    rowGroup: {
+      dataSrc: "artifact",
+      emptyDataGroup: "Unknown",
+      // custom rendering of the group header allowing collapse/expand
+      startRender: function (rows, group) {
+        const collapsed = !!collapsedGroups[group];
+
+        // hide or show the rows depending on collapse state
+        rows.nodes().each(r => {
+          collapsed ? $(r).hide() : $(r).show();
         });
-        api.fixedHeader.adjust();
+
+        // group label with item count and arrow icon
+        let text = group || "Unknown";
+        const count = rows.count();
+        if (count > 1) text += ` (${count})`;
+        const icon = collapsed ? "&#9654;" : "&#9660;";
+
+        return $("<tr/>")
+          .append(`<td colspan="${COLUMN_COUNT}">${icon} ${text}</td>`)
+          .attr("data-name", group)
+          .toggleClass("collapsed", collapsed);
       }
-    });
+    },
+    pageLength: 50,
+    // build header filters once the table is ready
+    initComplete: function () {
+      const api = this.api();
+      api.columns([1, 6]).every(function () {
+        const column = this;
+        const label = column.index() === 1 ? "Severity" : "Fix Status";
+
+        // create the <select> filter and wire up searching
+        const select = $('<select><option value=""></option></select>')
+          .appendTo($(column.header()).empty())
+          .on("change", function () {
+            const val = $.fn.dataTable.util.escapeRegex($(this).val());
+            column.search(val ? "^" + val + "$" : "", true, false).draw();
+          });
+
+        $(column.header()).prepend(label + "<br>");
+        if (column.index() === 1) severitySelect = select;
+        else fixSelect = select;
+      });
+
+      api.fixedHeader.adjust();
+    }
+  });
 
   table.rowGroup().disable();
-  let storedOrder = table.order();
 
+  // --- Helpers ---------------------------------------------------------
+
+  // Populate header <select> filters with unique values from the columns
   function updateFilters() {
     [
       { select: severitySelect, column: 1 },
       { select: fixSelect, column: 6 }
     ].forEach(function (item) {
-      item.select.find('option:not(:first)').remove();
-      table.column(item.column).data().unique().sort().each(function (d) {
-        item.select.append(`<option value="${d}">${d}</option>`);
-      });
+      item.select.find("option:not(:first)").remove();
+      table
+        .column(item.column)
+        .data()
+        .unique()
+        .sort()
+        .each(function (d) {
+          item.select.append(`<option value="${d}">${d}</option>`);
+        });
     });
     table.fixedHeader.adjust();
   }
 
+  // Load JSON data into the table and refresh filters
   function loadData(json) {
     const rows = json.matches.map(item => ({
       id: item.vulnerability.id,
@@ -90,19 +114,26 @@ $(document).ready(function () {
       fix: item.vulnerability.fix?.state || "unknown",
       artifact: item.artifact?.id ?? "Unknown"
     }));
+
     table.clear();
     table.rows.add(rows).draw();
     updateFilters();
   }
+
+  // --- Initial data load ----------------------------------------------
 
   fetch("test.json")
     .then(r => r.json())
     .then(data => loadData(data))
     .catch(err => console.error("Failed to load test.json", err));
 
+  // --- Event bindings --------------------------------------------------
+
+  // Allow user to load a custom JSON file
   $("#fileInput").on("change", function (event) {
     const file = event.target.files[0];
     if (!file) return;
+
     const reader = new FileReader();
     reader.onload = e => {
       try {
@@ -115,13 +146,16 @@ $(document).ready(function () {
     reader.readAsText(file);
   });
 
+  // Handle grouping selector
   $("#groupBy").on("change", function () {
     collapsedGroups = {};
     const val = $(this).val();
+
     if (val) {
       if (!table.rowGroup().enabled()) {
         storedOrder = table.order();
       }
+
       const colIndex = val === "id" ? 0 : 7;
       table.rowGroup().dataSrc(val).enable();
       table.order([colIndex, "asc"]).draw();
@@ -133,23 +167,31 @@ $(document).ready(function () {
     }
   });
 
+  // Toggle a single group when its header is clicked
   $("#cveTable tbody").on("click", "tr.dtrg-start", function () {
     const name = $(this).data("name");
     collapsedGroups[name] = !collapsedGroups[name];
     table.draw(false);
   });
 
+  // Collapse all groups
   $("#collapseAll").on("click", function () {
     if (!table.rowGroup().enabled()) return;
     const src = table.rowGroup().dataSrc();
     const colIndex = src === "id" ? 0 : 7;
+
     collapsedGroups = {};
-    table.column(colIndex, { search: 'applied' }).data().unique().each(function (d) {
-      collapsedGroups[d] = true;
-    });
+    table
+      .column(colIndex, { search: "applied" })
+      .data()
+      .unique()
+      .each(function (d) {
+        collapsedGroups[d] = true;
+      });
     table.draw(false);
   });
 
+  // Expand all groups
   $("#expandAll").on("click", function () {
     if (!table.rowGroup().enabled()) return;
     collapsedGroups = {};
