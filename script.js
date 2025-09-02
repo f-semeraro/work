@@ -53,12 +53,18 @@ $(document).ready(function () {
           .toggleClass("collapsed", collapsed);
       }
     },
-    pageLength: 50,
-    dom: 'Plfrtip',
-    searchPanes: {
-      columns: [1, 6]
-    }
-  });
+      pageLength: 50,
+      columnDefs: [
+        { targets: [3, 4, 5], type: 'num' }
+      ],
+      dom: 'QPlfrtip',
+      searchBuilder: {
+        columns: [3, 4, 5]
+      },
+      searchPanes: {
+        columns: [1, 6]
+      }
+    });
 
   table.rowGroup().disable();
 
