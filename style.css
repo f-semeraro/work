@@ -1,15 +1,25 @@
+/* Color palette ------------------------------------------------------ */
+:root {
+  --primary: #005f73;
+  --accent: #94d2bd;
+  --background: #f9f9f9;
+  --text: #333333;
+  --on-primary: #ffffff;
+  --group-header: #cbd5e1;
+}
+
 /* Base layout -------------------------------------------------------- */
 body {
   font-family: 'Segoe UI', sans-serif;
   margin: 0;
-  background-color: #f9f9f9;
-  color: #333;
+  background-color: var(--background);
+  color: var(--text);
 }
 
 h1 {
   text-align: center;
-  background-color: #005f73;
-  color: white;
+  background-color: var(--primary);
+  color: var(--on-primary);
   padding: 10px 0;
   margin: 0;
   font-size: 1.5rem;
@@ -19,7 +29,7 @@ h1 {
 #controls {
   position: sticky;
   top: 0;
-  background-color: #f9f9f9;
+  background-color: var(--background);
   z-index: 1000;
   padding: 10px 0;
   display: flex;
@@ -37,7 +47,7 @@ tr.dtrg-start {
 }
 
 tr.dtrg-start td {
-  background-color: #cbd5e1;
+  background-color: var(--group-header);
   font-weight: bold;
 }
 
@@ -55,5 +65,40 @@ tr.dtrg-start.collapsed td {
 #cveTable thead input {
   width: 100%;
   box-sizing: border-box;
+}
+
+/* Buttons ------------------------------------------------------------- */
+button {
+  background-color: var(--primary);
+  color: var(--on-primary);
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+button:hover,
+button:focus {
+  background-color: var(--accent);
+  color: var(--text);
+}
+
+button:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Row interactions ---------------------------------------------------- */
+#cveTable tbody tr {
+  transition: background-color 0.2s ease-in-out;
+}
+
+#cveTable tbody tr:hover,
+#cveTable tbody tr:focus {
+  background-color: var(--accent);
+}
+
+#cveTable tbody tr:focus {
+  outline: 2px solid var(--primary);
 }
 
