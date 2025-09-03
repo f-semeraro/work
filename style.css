@@ -49,6 +49,9 @@ tr.dtrg-start.collapsed td {
 #cveTable {
   width: 100%;
   margin: 20px auto;
+  /* Allow horizontal scrolling on small viewports */
+  overflow-x: auto;
+  display: block;
 }
 
 /* Ensure column search inputs fill the header cell */
