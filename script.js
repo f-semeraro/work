@@ -30,9 +30,17 @@ $(document).ready(function () {
       { title: "Artifact", data: "artifact" }
     ],
     columnControl: [
-      { target: 0, content: ['order'] },
-      { target: 1, content: ['search'] }
+      {
+            target: 0,
+            content: ['order','colVisDropdown','reorder']
+      },
+      { target: 1, content: ['search'] },
+      
     ],
+    ordering: {
+        indicators: false,
+        handler: false
+    },
     rowGroup: {
       dataSrc: "artifact",
       emptyDataGroup: "Unknown",
@@ -62,13 +70,12 @@ $(document).ready(function () {
         { targets: [3, 4, 5], type: 'num' }
       ],
       layout: {
-        topStart: ['searchBuilder', 'searchPanes'],
-        topEnd: ['pageLength', 'search'],
+        top1: {
+            buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+        },
+        topStart: ['searchPanes'],
         bottomStart: ['info'],
-        bottomEnd: ['paging']
-      },
-      searchBuilder: {
-        columns: [3, 4, 5]
+        bottomEnd: ['pageLength', 'paging']
       },
       searchPanes: {
         columns: [1, 6]

@@ -5,12 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vulnerability Viewer</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/2.3.3/css/dataTables.dataTables.css">
   <link rel="stylesheet" href="https://cdn.datatables.net/rowgroup/1.5.0/css/rowGroup.dataTables.min.css">
   <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/4.0.0/css/fixedHeader.dataTables.min.css">
   <link rel="stylesheet" href="https://cdn.datatables.net/select/2.0.3/css/select.dataTables.min.css">
   <link rel="stylesheet" href="https://cdn.datatables.net/searchpanes/2.3.1/css/searchPanes.dataTables.min.css">
   <link rel="stylesheet" href="https://cdn.datatables.net/searchbuilder/1.7.0/css/searchBuilder.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/columncontrol/1.0.7/css/columnControl.dataTables.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/colreorder/2.1.1/css/colReorder.dataTables.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.4/css/buttons.dataTables.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/searchpanes/2.3.5/css/searchPanes.dataTables.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/select/3.0.1/css/select.dataTables.css">
 </head>
 <body>
   <h1>Aesys Vulnerability Viewer</h1>
@@ -18,15 +23,15 @@
   <!-- Control panel: file input, grouping selector and buttons -->
   <div id="controls">
     <input type="file" id="fileInput" accept=".json">
-    <label for="groupBy">Raggruppa per:</label>
+    <label for="groupBy">Group by:</label>
     <select id="groupBy">
-      <option value="">Nessuno</option>
+      <option value=""></option>
       <option value="id">CVE ID</option>
       <option value="artifact">Artifact</option>
     </select>
 
-    <button id="collapseAll" disabled>Riduci tutti</button>
-    <button id="expandAll" disabled>Espandi tutti</button>
+    <button id="collapseAll" disabled>Collapse All</button>
+    <button id="expandAll" disabled>Show All</button>
   </div>
 
   <!-- DataTables placeholder where rows will be injected -->
@@ -48,12 +53,27 @@
 
   <!-- Libraries: jQuery and DataTables -->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/2.3.3/js/dataTables.min.js"></script>
   <script src="https://cdn.datatables.net/rowgroup/1.5.0/js/dataTables.rowGroup.min.js"></script>
   <script src="https://cdn.datatables.net/fixedheader/4.0.0/js/dataTables.fixedHeader.min.js"></script>
   <script src="https://cdn.datatables.net/select/2.0.3/js/dataTables.select.min.js"></script>
-  <script src="https://cdn.datatables.net/searchpanes/2.3.1/js/dataTables.searchPanes.min.js"></script>
+  <script src="https://cdn.datatables.net/searchpanes/2.3.5/js/dataTables.searchPanes.min.js"></script>
   <script src="https://cdn.datatables.net/searchbuilder/1.7.0/js/dataTables.searchBuilder.min.js"></script>
+  <script src="https://cdn.datatables.net/columncontrol/1.0.7/js/dataTables.columnControl.js"></script>
+  <script src="https://cdn.datatables.net/columncontrol/1.0.7/js/columnControl.dataTables.js"></script>
+  <script src="https://cdn.datatables.net/colreorder/2.1.1/js/dataTables.colReorder.js"></script>
+  <script src="https://cdn.datatables.net/colreorder/2.1.1/js/colReorder.dataTables.js"></script>
+  <script src="https://cdn.datatables.net/buttons/3.2.4/js/dataTables.buttons.js"></script>
+  <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.dataTables.js"></script>
+  <script src="https://cdn.datatables.net/searchpanes/2.3.5/js/searchPanes.dataTables.js"></script>
+  <script src="https://cdn.datatables.net/select/3.0.1/js/dataTables.select.js"></script>
+  <script src="https://cdn.datatables.net/select/3.0.1/js/select.dataTables.js"></script>
+  <script src="https://cdn.datatables.net/select/3.0.1/js/select.dataTables.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+  <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.html5.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.print.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
