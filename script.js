@@ -69,6 +69,7 @@ $(document).ready(function () {
       columnDefs: [
         { targets: [3, 4, 5], type: 'num' }
       ],
+      responsive: true,
       layout: {
         top1: {
             buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
