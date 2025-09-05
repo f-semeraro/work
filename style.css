@@ -1,10 +1,11 @@
 /* Base layout -------------------------------------------------------- */
-body {
-  font-family: 'Segoe UI', sans-serif;
-  margin: 0;
-  background-color: #f9f9f9;
-  color: #333;
-}
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    background-color: #f9f9f9;
+    color: #333;
+    padding-bottom: 80px;
+  }
 
 h1 {
   text-align: center;
@@ -14,6 +15,39 @@ h1 {
   margin: 0;
   font-size: 1.5rem;
 }
+
+/* Footer ------------------------------------------------------------- */
+  footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #005f73;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 10px 20px;
+  }
+
+  #dtFooter {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  #dtControls {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  footer select {
+    color: black;
+  }
 
 /* Sticky bar with file input and controls --------------------------- */
 #controls {

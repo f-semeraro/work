@@ -79,6 +79,15 @@ $(document).ready(function () {
       },
       searchPanes: {
         columns: [1, 6]
+      },
+      initComplete: function () {
+        const dtFooter = $('#dtFooter');
+        const right = $('<div id="dtControls"/>');
+        dtFooter.append($('#cveTable_info'));
+        right.append($('#cveTable_length'));
+        right.append($('#cveTable_paginate'));
+        dtFooter.append(right);
+        $('#cveTable_wrapper .dt-layout-row:last').css('display', 'none');
       }
     });
 
