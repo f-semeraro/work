@@ -38,8 +38,11 @@ h1 {
     flex-wrap: wrap;
   }
 
-  #dtFooter .dt-paging {
+  #dtControls {
     margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 20px;
   }
 
   footer select {

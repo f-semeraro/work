@@ -82,9 +82,11 @@ $(document).ready(function () {
       },
       initComplete: function () {
         const dtFooter = $('#dtFooter');
+        const right = $('<div id="dtControls"/>');
         dtFooter.append($('#cveTable_info'));
-        dtFooter.append($('#cveTable_length'));
-        dtFooter.append($('#cveTable_paginate'));
+        right.append($('#cveTable_length'));
+        right.append($('#cveTable_paginate'));
+        dtFooter.append(right);
         $('#cveTable_wrapper .dt-layout-row:last').css('display', 'none');
       }
     });
