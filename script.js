@@ -81,15 +81,26 @@ $(document).ready(function () {
         columns: [1, 6]
       },
       initComplete: function () {
-        const dtFooter = $('#dtFooter');
-        const right = $('<div id="dtControls"/>');
-        dtFooter.append($('#cveTable_info'));
-        right.append($('#cveTable_length'));
-        right.append($('#cveTable_paginate'));
-        dtFooter.append(right);
-        $('#cveTable_wrapper .dt-layout-row:last').css('display', 'none');
+        moveDtControls();
       }
     });
+
+    // Reposition DataTables controls into the fixed footer
+    function moveDtControls() {
+      const dtFooter = $('#dtFooter');
+      let right = $('#dtControls');
+      if (!right.length) {
+        right = $('<div id="dtControls"/>').appendTo(dtFooter);
+      }
+
+      dtFooter.prepend($('#cveTable_info'));
+      right.append($('#cveTable_length'));
+      right.append($('#cveTable_paginate'));
+
+      $('#cveTable_wrapper .dt-layout-row:last').hide();
+    }
+
+    table.on('draw.dt', moveDtControls);
 
   table.rowGroup().disable();
 
