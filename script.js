@@ -79,6 +79,13 @@ $(document).ready(function () {
       },
       searchPanes: {
         columns: [1, 6]
+      },
+      initComplete: function () {
+        const dtFooter = $('#dtFooter');
+        dtFooter.append($('#cveTable_info'));
+        dtFooter.append($('#cveTable_length'));
+        dtFooter.append($('#cveTable_paginate'));
+        $('#cveTable_wrapper .dt-layout-row:last').remove();
       }
     });
 
