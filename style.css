@@ -24,17 +24,22 @@ h1 {
     background-color: #005f73;
     color: white;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     flex-wrap: wrap;
     padding: 10px 20px;
   }
 
   #dtFooter {
+    flex: 1;
     display: flex;
     align-items: center;
     gap: 20px;
     flex-wrap: wrap;
+  }
+
+  #dtFooter .dt-paging {
+    margin-left: auto;
   }
 
   footer select {
