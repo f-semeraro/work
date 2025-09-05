@@ -4,6 +4,7 @@ body {
   margin: 0;
   background-color: #f9f9f9;
   color: #333;
+  padding-bottom: 50px;
 }
 
 h1 {
@@ -13,6 +14,17 @@ h1 {
   padding: 10px 0;
   margin: 0;
   font-size: 1.5rem;
+}
+
+/* Footer ------------------------------------------------------------- */
+footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #005f73;
+  color: white;
+  text-align: center;
+  padding: 10px 0;
 }
 
 /* Sticky bar with file input and controls --------------------------- */
